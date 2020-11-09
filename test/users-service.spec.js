@@ -18,20 +18,35 @@ describe(`UsersService object`, () => {
 
     before(() => db('users').truncate())
 
-    before(() => {
-        return db
-            .into('users')
-            .insert(testUsers)
-    })
+    afterEach(() => db('users').truncate())
 
     after(() => db.destroy())
 
     describe(`getAllUsers()`, () => {
-        it(`returns all users from the users table`, () => {
-            return UsersService.getAllUsers(db)
-                .then(actual => {
-                    expect(actual).to.eql(testUsers)
-                })
+
+        context(`Given users in database`, () => {
+
+            before(() => {
+                return db
+                    .into('users')
+                    .insert(testUsers)
+            })
+
+            it(`returns all users from the users table`, () => {
+                return UsersService.getAllUsers(db)
+                    .then(actual => {
+                        expect(actual).to.eql(testUsers)
+                    })
+            })
+        })
+        
+        context(`Given no users`, () => {
+            it(`returns an empty array`, () => {
+                return UsersService.getAllUsers(db)
+                    .then(actual => {
+                        expect(actual).to.eql([])
+                    }) 
+            })
         })
     })
 })
