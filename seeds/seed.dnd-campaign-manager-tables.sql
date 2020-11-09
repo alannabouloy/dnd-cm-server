@@ -16,3 +16,4 @@ VALUES
     ('ashleyjohnson', 'harpsandflowers', 'Ashley', 'Johnson', 'ajohnson@email.com'),
     ('notacabbage', 'no1puphenry', 'Brian W.', 'Foster', 'bwfoster@email.com');
 
+COMMIT;
