@@ -8,7 +8,7 @@ const CampaignsService = {
         return knex
             .select('*')
             .from('campaigns')
-            .where(admin, adminId)
+            .where('admin', adminId)
     },
     getCampaignById(knex, id){
         return knex
@@ -38,3 +38,5 @@ const CampaignsService = {
     }
 
 }
+
+module.exports = CampaignsService;
