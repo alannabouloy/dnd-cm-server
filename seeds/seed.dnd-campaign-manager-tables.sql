@@ -1,6 +1,8 @@
 BEGIN;
 
 TRUNCATE
+    notes,
+    campaigns,
     users
 RESTART IDENTITY CASCADE;
 
@@ -23,4 +25,9 @@ VALUES
     (1, 'Mighty Nein', 7, true),
     (10, 'Merry Misfits', 5, true);
 
+INSERT INTO notes (admin, campaign, note_title, note_content)
+VALUES
+    (2, 2, 'Meeting Dairon', 'Met an awesome monk named Dairon. They wand me to be an expositor. Kicks ass'),
+    (2, 2, 'Nott has a family', 'Real name is Veth. Has a son named Luc and husband named Yeza. Actually a halfling. Felderwin'),
+    (6, 2, 'My tragic backstory', 'Told Beau how I was abused and brainwashed into brutally murdering my parents in order to get into archive. Went well');
 COMMIT;
