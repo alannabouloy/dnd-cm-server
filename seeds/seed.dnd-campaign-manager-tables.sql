@@ -14,6 +14,13 @@ VALUES
     ('tragicbackstoryliam', 'calebcries', 'Liam', 'O Brien', 'lobrien@email.com'),
     ('traviswillingham', 'cowboysrule', 'Travis', 'Willingham', 'twillingham@email.com'),
     ('ashleyjohnson', 'harpsandflowers', 'Ashley', 'Johnson', 'ajohnson@email.com'),
-    ('notacabbage', 'no1puphenry', 'Brian W.', 'Foster', 'bwfoster@email.com');
+    ('notacabbage', 'no1puphenry', 'Brian W.', 'Foster', 'bwfoster@email.com'),
+    ('galarzacat', 'freyaisacutie', 'Alex', 'Galarza', 'agalarza@email.com');
+
+INSERT INTO campaigns (admin, campaign_name, players, active)
+VALUES
+    (1, 'Vox Machina', 7, true),
+    (1, 'Mighty Nein', 7, true),
+    (10, 'Merry Misfits', 5, true);
 
 COMMIT;
