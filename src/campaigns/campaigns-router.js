@@ -3,9 +3,11 @@ const CampaignsService = require('./campaigns-service')
 const helpers = require('../helpers')
 const path = require('path')
 const UsersService = require('../users/users-service')
+const { getAllCampaigns } = require('./campaigns-service')
 
 const userCampaignsRouter = express.Router()
 const jsonParser = express.json()
+const campaignsRouter = express.Router()
 
 userCampaignsRouter
     .route('/:user_id/campaigns')
@@ -209,4 +211,38 @@ userCampaignsRouter
             })
     })
 
-module.exports = userCampaignsRouter
+campaignsRouter
+    .route('/')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        CampaignsService.getAllCampaigns(knexInstance)
+            .then(campaigns => {
+                res.json(campaigns)
+            })
+    })
+
+campaignsRouter
+    .route('/:campaign_id')
+    .all((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const campId = req.params.campaign_id
+
+        CampaignsService.getCampaignById(knexInstance, campId)
+            .then(campaign => {
+                if(!campaign){
+                    return res
+                        .status(404)
+                        .json({error: {message: `Campaign Not Found`}})
+                }
+                res.campaign = campaign
+                next()
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        res
+            .json(res.campaign)
+    })
+
+
+module.exports = { userCampaignsRouter, campaignsRouter}
