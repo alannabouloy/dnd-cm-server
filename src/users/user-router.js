@@ -87,4 +87,23 @@ usersRouter
             })
     })
 
+usersRouter
+    .route('/:user_id')
+    .all((req, res, next) => {
+        knexInstance = req.app.get('db')
+        UsersService.getUserById(knexInstance, req.params.user_id)
+            .then(user => {
+                if(!user){
+                    return res
+                        .status(404)
+                        .json({error: {message: `User Not Found`}})
+                }
+                res.user = user
+                next()
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        res.json(res.user)
+    })
 module.exports = usersRouter
