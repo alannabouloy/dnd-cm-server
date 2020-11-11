@@ -42,35 +42,30 @@ usersRouter
                 .status(400)
                 .json(error)
         }
-        error = ''
         error = helpers.validateStringLength(username, 6, "username")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = ''
         error = helpers.validateStringLength(user_password, 8, "user_password")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = ''
         error = helpers.validateStringLength(first_name, 2, "first_name")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = ''
         error = helpers.validateStringLength(last_name, 2, "last_name")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = ''
         error = helpers.validateEmail(email)
         if(error){
             return res
@@ -109,9 +104,82 @@ usersRouter
     .delete((req, res, next) => {
         const knexInstance = req.app.get('db')
         UsersService.deleteUser(knexInstance, req.params.user_id)
-            .then(numRowsAffected => {
+            .then(() => {
                 res.status(204).end()
             })
             .catch(next)
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const {
+            username, 
+            user_password, 
+            first_name, 
+            last_name, 
+            email
+        } = req.body
+        const updateUserFields = {
+            username,
+            user_password,
+            first_name,
+            last_name,
+            email
+        }
+
+        const numOfValues = Object.values(updateUserFields).filter(Boolean).length
+        if(numOfValues === 0){
+            return res
+                .status(400)
+                .json({error: {message: `Request body must include a field to update`}})
+        }
+
+        let error = ''
+        if(username){
+            error = helpers.validateStringLength(username, 6, "username")
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+        if(user_password){
+            error = helpers.validateStringLength(user_password, 8, "user_password")
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+        if(first_name){
+            error = helpers.validateStringLength(first_name, 2, "first_name")
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+        if(last_name){
+            error = helpers.validateStringLength(last_name, 2, "last_name")
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+        if(email){
+            error = helpers.validateEmail(email)
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        UsersService.updateUser(knexInstance, req.params.user_id, updateUserFields)
+            .then(() => {
+                res 
+                    .status(204)
+                    .end()
+            })
     })
 module.exports = usersRouter
