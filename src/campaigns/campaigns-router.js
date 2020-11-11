@@ -3,7 +3,7 @@ const CampaignsService = require('./campaigns-service')
 const helpers = require('../helpers')
 const path = require('path')
 const UsersService = require('../users/users-service')
-const { getAllCampaigns } = require('./campaigns-service')
+
 
 const userCampaignsRouter = express.Router()
 const jsonParser = express.json()

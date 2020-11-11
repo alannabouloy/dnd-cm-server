@@ -6,11 +6,12 @@ const NotesService = {
             .where('campaign', campaignId)
     },
 
-    getAllNotesByAdmin(knex, adminId){
+    getAllNotesByAdmin(knex, adminId, campId){
         return knex
             .select('*')
             .from('notes')
             .where('admin', adminId)
+            .where('campaign', campId)
     },
 
     getNoteById(knex, id){
