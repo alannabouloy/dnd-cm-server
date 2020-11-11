@@ -90,7 +90,7 @@ usersRouter
 usersRouter
     .route('/:user_id')
     .all((req, res, next) => {
-        knexInstance = req.app.get('db')
+        const knexInstance = req.app.get('db')
         UsersService.getUserById(knexInstance, req.params.user_id)
             .then(user => {
                 if(!user){
@@ -105,5 +105,13 @@ usersRouter
     })
     .get((req, res, next) => {
         res.json(res.user)
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        UsersService.deleteUser(knexInstance, req.params.user_id)
+            .then(numRowsAffected => {
+                res.status(204).end()
+            })
+            .catch(next)
     })
 module.exports = usersRouter
