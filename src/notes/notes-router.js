@@ -3,7 +3,7 @@ const NotesService = require('./notes-service')
 const helpers = require('../helpers')
 const path = require('path')
 const CampaignsService = require('../campaigns/campaigns-service')
-const { networkInterfaces } = require('os')
+
 
 const notesRouter = express.Router()
 const jsonParser = express.json()
