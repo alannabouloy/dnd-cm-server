@@ -14,11 +14,12 @@ const NotesService = {
             .where('campaign', campId)
     },
 
-    getNoteById(knex, id){
+    getNoteById(knex, campId, noteId){
         return knex
             .select('*')
             .from('notes')
-            .where('id', id)
+            .where('campaign', campId)
+            .where('id', noteId)
             .first()
     },
     addNote(knex, newNote){
@@ -30,14 +31,16 @@ const NotesService = {
                 return rows[0]
             })
     },
-    updateNote(knex, id, updateFields){
+    updateNote(knex, campId, noteId, updateFields){
         return knex('notes')
-            .where({id})
+            .where({campaign : campId})
+            .where({id : noteId})
             .update(updateFields)
     },
-    deleteCampaign(knex, id){
+    deleteNote(knex, campId, noteId){
         return knex('notes')
-            .where({id})
+            .where({campaign : campId})
+            .where({id : noteId})
             .delete()
     }
 }
