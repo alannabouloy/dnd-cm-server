@@ -50,12 +50,45 @@ userCampaignsRouter
                 .status(400)
                 .json({error: {message: `Request body must include a 'campaign_name' value`}})
         }
-        error = ''
-        error = helpers.validateStringLength(campaign_name, 4, "campaign_name")
-        if(error){
+        errorMessage = ''
+        errorMessage = helpers.validateStringLength(campaign_name, 4, "campaign_name")
+        if(errorMessage){
             return res
                 .status(400)
-                .json(error)
+                .json(errorMessage)
+        }
+        errorMessage = helpers.validateType(campaign_name, 'string', 'campaign_name')
+        if(errorMessage){
+            return res
+                .status(400)
+                .json(errorMessage)
+        }
+
+        if(players){
+            errorMessage = helpers.validateType(players, 'number', 'players')
+            if(errorMessage){
+                return res
+                    .status(400)
+                    .json(errorMessage)
+            }
+        }
+
+        if(active){
+            errorMessage = helpers.validateType(active, 'boolean', 'active')
+            if(errorMessage){
+                return res
+                    .status(400)
+                    .json(errorMessage)
+            }
+        }
+
+        if(private_campaign){
+            errorMessage = helpers.validateType(private_campaign, 'boolean', 'private_campaign')
+            if(errorMessage){
+                return res
+                    .status(400)
+                    .json(errorMessage)
+            }
         }
 
         CampaignsService.addCampaign(knexInstance, newCampaign)
@@ -64,6 +97,115 @@ userCampaignsRouter
                     .status(201)
                     .location(path.posix.join(req.originalUrl, `/${campaign.id}`))
                     .json(campaign)
+            })
+    })
+
+userCampaignsRouter
+    .route('/:user_id/campaigns/:campaign_id')
+    .all((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const userId = req.params.user_id
+        const campId = req.params.campaign_id
+        UsersService.getUserById(knexInstance, userId)
+            .then(user => {
+                if(!user){
+                    return res
+                    .status(404)
+                    .json({error: {message: `User NotFound`}})
+                }
+                CampaignsService.getUserCampaignById(knexInstance, userId, campId)
+                    .then(campaign => {
+                        if(!campaign){
+                            return res
+                                .status(404)
+                                .json({error: {message: `Campaign Not Found`}})
+                        }
+                        req.campaign = campaign
+                        next()
+                    }) 
+                    .catch(next)
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        res.json(req.campaign)
+    })
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const adminId = req.params.user_id
+        const campId = req.params.campaign_id
+        CampaignsService.deleteUserCampaign(knexInstance, adminId, campId)
+            .then(() => {
+                res
+                    .status(204)
+                    .end()
+            })
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const userId = req.params.user_id
+        const campId = req.params.campaign_id
+        const {campaign_name, active, private_campaign, players} = req.body
+        const updateCampaignFields = {
+            campaign_name,
+            active,
+            private_campaign,
+            players
+        }
+        const numOfValues = Object.values(updateCampaignFields).filter(Boolean).length
+        if(numOfValues === 0){
+            return res
+                .status(400)
+                .json({error: {message: `Request body must include a field to update`}})
+        }
+        let error = ''
+
+        if(campaign_name){
+            error = helpers.validateType(campaign_name, 'string', 'campaign_name')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+            error = helpers.validateStringLength(campaign_name, 4, 'campaign_name')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+        if(active){
+            error = helpers.validateType(active, 'boolean', 'active')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        if(players){
+            error = helpers.validateType(players, 'number', 'players')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        if(private_campaign){
+            error = helpers.validateType(private_campaign, 'boolean', 'private_campaign')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        CampaignsService.updateUserCampaign(knexInstance, userId, campId, updateCampaignFields)
+            .then(() => {
+                res
+                    .status(204)
+                    .end()
             })
     })
 

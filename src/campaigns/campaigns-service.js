@@ -10,11 +10,19 @@ const CampaignsService = {
             .from('campaigns')
             .where('admin', adminId)
     },
-    getCampaignById(knex, id){
+    getUserCampaignById(knex, adminId, campId){
         return knex
             .select('*')
             .from('campaigns')
-            .where('id', id)
+            .where('admin', adminId)
+            .where('id', campId)
+            .first()
+    },
+    getCampaignById(knex, campId){
+        return knex
+            .select('*')
+            .from('campaigns')
+            .where('id', campId)
             .first()
     },
     addCampaign(knex, newCampaign){
@@ -26,14 +34,16 @@ const CampaignsService = {
             return rows[0]
         })
     },
-    updateCampaign(knex, id, updateFields){
+    updateUserCampaign(knex, adminId, campId, updateFields){
         return knex('campaigns')
-            .where({id})
+            .where({admin : adminId})
+            .where({id : campId})
             .update(updateFields)
     },
-    deleteCampaign(knex, id){
+    deleteUserCampaign(knex, adminId, campId){
         return knex('campaigns')
-            .where({id})
+            .where({admin : adminId})
+            .where({id: campId})
             .delete()
     }
 

@@ -20,6 +20,11 @@ const helpers = {
         if(!email.match(mailFormat)){
             return {error: {message: `Request body must include a valid email address`}}
         }
+    },
+    validateType(value, type, key){
+        if(typeof value !== type){
+            return {error: {message: `Invalid request: ${key} must be a ${type}`}}
+        }
     }
 }
 
