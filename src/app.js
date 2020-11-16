@@ -20,9 +20,10 @@ app.use(helmet());
 app.use(cors());
 
 app.use('/api/users', usersRouter);
-app.use('/api/users', userCampaignsRouter);
+app.use('/api/user_campaigns', userCampaignsRouter);
 app.use('/api/campaigns', campaignsRouter);
-app.use('/api/campaigns', notesRouter);
+app.use('/api/user_notes', userNotesRouter);
+app.use('/api/notes', notesRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello, world!')

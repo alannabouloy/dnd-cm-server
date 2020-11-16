@@ -8,12 +8,14 @@ const UsersService = require('../users/users-service')
 const userCampaignsRouter = express.Router()
 const jsonParser = express.json()
 const campaignsRouter = express.Router()
+const {requireAuth} = require('../middleware/basic-auth')
 
 userCampaignsRouter
-    .route('/:user_id/campaigns')
+    .route('/')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const id = req.params.user_id
+        const id = req.user.id
         UsersService.getUserById(knexInstance, id)
             .then(user => {
                 if(!user){
@@ -28,7 +30,7 @@ userCampaignsRouter
     })
     .get((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const id = req.params.user_id
+        const id = req.user.id
         CampaignsService.getAllCampaignsByAdmin(knexInstance, id)
             .then(campaigns => {
                 res
@@ -38,7 +40,7 @@ userCampaignsRouter
     })
     .post(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const admin = req.params.user_id
+        const admin = req.user.id
         const {campaign_name, players = 1, active = true, private_campaign = false } = req.body
         const newCampaign = {
             campaign_name,
@@ -103,10 +105,10 @@ userCampaignsRouter
     })
 
 userCampaignsRouter
-    .route('/:user_id/campaigns/:campaign_id')
+    .route('/:campaign_id')
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const userId = req.params.user_id
+        const userId = req.user.id
         const campId = req.params.campaign_id
         UsersService.getUserById(knexInstance, userId)
             .then(user => {
@@ -134,7 +136,7 @@ userCampaignsRouter
     })
     .delete((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const adminId = req.params.user_id
+        const adminId = req.user.id
         const campId = req.params.campaign_id
         CampaignsService.deleteUserCampaign(knexInstance, adminId, campId)
             .then(() => {
@@ -145,7 +147,7 @@ userCampaignsRouter
     })
     .patch(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const userId = req.params.user_id
+        const userId = req.user.id
         const campId = req.params.campaign_id
         const {campaign_name, active, private_campaign, players} = req.body
         const updateCampaignFields = {
