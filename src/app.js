@@ -7,7 +7,7 @@ const { NODE_ENV } = require('./config');
 const usersRouter = require('./users/user-router');
 const { userCampaignsRouter } = require('./campaigns/campaigns-router');
 const { campaignsRouter } = require('./campaigns/campaigns-router');
-const notesRouter = require('./notes/notes-router');
+const { notesRouter , userNotesRouter} = require('./notes/notes-router');
 
 const app = express();
 

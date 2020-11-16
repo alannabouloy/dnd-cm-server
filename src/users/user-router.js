@@ -95,14 +95,14 @@ usersRouter
                         .status(404)
                         .json({error: {message: `User Not Found`}})
                 }
-                res.user = user
+                req.user
                 next()
             })
             .catch(next)
     })
     .get((req, res, next) => {
-        const {username, first_name, last_name, email} = res.user
-        const user = {username, first_name, last_name, email}
+        const {username, first_name, last_name, email, id} = req.user
+        const user = {username, first_name, last_name, email, id}
         res.json(user)
     })
     .delete((req, res, next) => {

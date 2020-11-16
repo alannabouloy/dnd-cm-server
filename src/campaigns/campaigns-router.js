@@ -16,6 +16,7 @@ userCampaignsRouter
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
         const id = req.user.id
+        console.log('this is the user id', id)
         UsersService.getUserById(knexInstance, id)
             .then(user => {
                 if(!user){
