@@ -107,6 +107,7 @@ userCampaignsRouter
 
 userCampaignsRouter
     .route('/:campaign_id')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
         const userId = req.user.id
