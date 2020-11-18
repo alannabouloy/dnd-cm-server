@@ -42,12 +42,13 @@ userCampaignsRouter
     .post(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
         const admin = req.user.id
-        const {campaign_name, players = 1, active = true, private_campaign = false } = req.body
+        const {campaign_name, players = 1, active = true, private_campaign = false, camp_desc = '' } = req.body
         const newCampaign = {
             campaign_name,
             players,
             active,
             private_campaign,
+            camp_desc,
             admin
         }
         if(!campaign_name){
@@ -89,6 +90,15 @@ userCampaignsRouter
 
         if(private_campaign){
             errorMessage = helpers.validateType(private_campaign, 'boolean', 'private_campaign')
+            if(errorMessage){
+                return res
+                    .status(400)
+                    .json(errorMessage)
+            }
+        }
+
+        if(camp_desc){
+            errorMessage = helpers.validateType(camp_desc, 'string', 'camp_desc')
             if(errorMessage){
                 return res
                     .status(400)
@@ -151,12 +161,13 @@ userCampaignsRouter
         const knexInstance = req.app.get('db')
         const userId = req.user.id
         const campId = req.params.campaign_id
-        const {campaign_name, active, private_campaign, players} = req.body
+        const {campaign_name, active, private_campaign, players, camp_desc} = req.body
         const updateCampaignFields = {
             campaign_name,
             active,
             private_campaign,
-            players
+            players,
+            camp_desc
         }
         const numOfValues = Object.values(updateCampaignFields).filter(Boolean).length
         if(numOfValues === 0){
@@ -200,6 +211,15 @@ userCampaignsRouter
 
         if(private_campaign){
             error = helpers.validateType(private_campaign, 'boolean', 'private_campaign')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        if(camp_desc){
+            error = helpers.validateType(camp_desc, 'string', 'camp_desc')
             if(error){
                 return res
                     .status(400)
