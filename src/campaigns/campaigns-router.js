@@ -3,12 +3,13 @@ const CampaignsService = require('./campaigns-service')
 const helpers = require('../helpers')
 const path = require('path')
 const UsersService = require('../users/users-service')
+const {requireAuth} = require('../middleware/jwt-auth')
 
 
 const userCampaignsRouter = express.Router()
 const jsonParser = express.json()
 const campaignsRouter = express.Router()
-const {requireAuth} = require('../middleware/basic-auth')
+
 
 userCampaignsRouter
     .route('/')

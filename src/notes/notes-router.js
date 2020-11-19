@@ -3,7 +3,7 @@ const NotesService = require('./notes-service')
 const helpers = require('../helpers')
 const path = require('path')
 const CampaignsService = require('../campaigns/campaigns-service')
-const { requireAuth } = require('../middleware/basic-auth')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 
 const userNotesRouter = express.Router()

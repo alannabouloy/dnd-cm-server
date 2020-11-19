@@ -8,6 +8,7 @@ const usersRouter = require('./users/user-router');
 const { userCampaignsRouter } = require('./campaigns/campaigns-router');
 const { campaignsRouter } = require('./campaigns/campaigns-router');
 const { notesRouter , userNotesRouter} = require('./notes/notes-router');
+const authRouter = require('./auth/auth-router');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/user_campaigns', userCampaignsRouter);
 app.use('/api/campaigns', campaignsRouter);
 app.use('/api/user_notes', userNotesRouter);
 app.use('/api/notes', notesRouter)
+app.use('/api/auth', authRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello, world!')
