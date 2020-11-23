@@ -2,6 +2,7 @@ const express = require('express')
 const UsersService = require('./users-service')
 const helpers = require('../helpers')
 const path = require('path')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const usersRouter = express.Router()
 const jsonParser = express.json()
@@ -83,27 +84,30 @@ usersRouter
     })
 
 usersRouter
-    .route('/:user_id')
+    .route('/:username')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
-        UsersService.getUserById(knexInstance, req.params.user_id)
+        UsersService.getUserById(knexInstance, req.user.id)
             .then(user => {
                 if(!user){
                     return res
                         .status(404)
                         .json({error: {message: `User Not Found`}})
                 }
-                res.user = user
+                req.user
                 next()
             })
             .catch(next)
     })
     .get((req, res, next) => {
-        res.json(res.user)
+        const {username, first_name, last_name, email, id} = req.user
+        const user = {username, first_name, last_name, email, id}
+        res.json(user)
     })
     .delete((req, res, next) => {
         const knexInstance = req.app.get('db')
-        UsersService.deleteUser(knexInstance, req.params.user_id)
+        UsersService.deleteUser(knexInstance, req.user.id)
             .then(() => {
                 res.status(204).end()
             })
@@ -175,7 +179,7 @@ usersRouter
             }
         }
 
-        UsersService.updateUser(knexInstance, req.params.user_id, updateUserFields)
+        UsersService.updateUser(knexInstance, req.user.id, updateUserFields)
             .then(() => {
                 res 
                     .status(204)

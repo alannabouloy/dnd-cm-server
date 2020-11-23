@@ -3,17 +3,21 @@ const CampaignsService = require('./campaigns-service')
 const helpers = require('../helpers')
 const path = require('path')
 const UsersService = require('../users/users-service')
+const {requireAuth} = require('../middleware/jwt-auth')
 
 
 const userCampaignsRouter = express.Router()
 const jsonParser = express.json()
 const campaignsRouter = express.Router()
 
+
 userCampaignsRouter
-    .route('/:user_id/campaigns')
+    .route('/')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const id = req.params.user_id
+        const id = req.user.id
+        console.log('this is the user id', id)
         UsersService.getUserById(knexInstance, id)
             .then(user => {
                 if(!user){
@@ -28,7 +32,7 @@ userCampaignsRouter
     })
     .get((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const id = req.params.user_id
+        const id = req.user.id
         CampaignsService.getAllCampaignsByAdmin(knexInstance, id)
             .then(campaigns => {
                 res
@@ -38,13 +42,14 @@ userCampaignsRouter
     })
     .post(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const admin = req.params.user_id
-        const {campaign_name, players = 1, active = true, private_campaign = false } = req.body
+        const admin = req.user.id
+        const {campaign_name, players = 1, active = true, private_campaign = false, camp_desc = '' } = req.body
         const newCampaign = {
             campaign_name,
             players,
             active,
             private_campaign,
+            camp_desc,
             admin
         }
         if(!campaign_name){
@@ -93,6 +98,15 @@ userCampaignsRouter
             }
         }
 
+        if(camp_desc){
+            errorMessage = helpers.validateType(camp_desc, 'string', 'camp_desc')
+            if(errorMessage){
+                return res
+                    .status(400)
+                    .json(errorMessage)
+            }
+        }
+
         CampaignsService.addCampaign(knexInstance, newCampaign)
             .then(campaign => {
                 res
@@ -103,10 +117,11 @@ userCampaignsRouter
     })
 
 userCampaignsRouter
-    .route('/:user_id/campaigns/:campaign_id')
+    .route('/:campaign_id')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const userId = req.params.user_id
+        const userId = req.user.id
         const campId = req.params.campaign_id
         UsersService.getUserById(knexInstance, userId)
             .then(user => {
@@ -134,7 +149,7 @@ userCampaignsRouter
     })
     .delete((req, res, next) => {
         const knexInstance = req.app.get('db')
-        const adminId = req.params.user_id
+        const adminId = req.user.id
         const campId = req.params.campaign_id
         CampaignsService.deleteUserCampaign(knexInstance, adminId, campId)
             .then(() => {
@@ -145,14 +160,15 @@ userCampaignsRouter
     })
     .patch(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
-        const userId = req.params.user_id
+        const userId = req.user.id
         const campId = req.params.campaign_id
-        const {campaign_name, active, private_campaign, players} = req.body
+        const {campaign_name, active, private_campaign, players, camp_desc} = req.body
         const updateCampaignFields = {
             campaign_name,
             active,
             private_campaign,
-            players
+            players,
+            camp_desc
         }
         const numOfValues = Object.values(updateCampaignFields).filter(Boolean).length
         if(numOfValues === 0){
@@ -196,6 +212,15 @@ userCampaignsRouter
 
         if(private_campaign){
             error = helpers.validateType(private_campaign, 'boolean', 'private_campaign')
+            if(error){
+                return res
+                    .status(400)
+                    .json(error)
+            }
+        }
+
+        if(camp_desc){
+            error = helpers.validateType(camp_desc, 'string', 'camp_desc')
             if(error){
                 return res
                     .status(400)

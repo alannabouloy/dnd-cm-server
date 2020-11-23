@@ -3,13 +3,16 @@ const NotesService = require('./notes-service')
 const helpers = require('../helpers')
 const path = require('path')
 const CampaignsService = require('../campaigns/campaigns-service')
-const { networkInterfaces } = require('os')
+const { requireAuth } = require('../middleware/jwt-auth')
 
+
+const userNotesRouter = express.Router()
 const notesRouter = express.Router()
 const jsonParser = express.json()
 
-notesRouter
-    .route('/:campaign_id/notes')
+userNotesRouter
+    .route('/:campaign_id')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
         const campId = req.params.campaign_id
@@ -36,8 +39,8 @@ notesRouter
     .post(jsonParser, (req, res, next) => {
         const knexInstance = req.app.get('db')
         const campaign = req.params.campaign_id
+        const admin = req.user.id
         const {
-            admin,
             note_title,
             note_content,
             private_note = false,
@@ -103,8 +106,9 @@ notesRouter
 
     })
 
-notesRouter 
-    .route('/:campaign_id/notes/:note_id')
+userNotesRouter 
+    .route('/:campaign_id/:note_id')
+    .all(requireAuth)
     .all((req, res, next) => {
         const knexInstance = req.app.get('db')
         const campId = req.params.campaign_id
@@ -138,6 +142,7 @@ notesRouter
         const knexInstance = req.app.get('db')
         const campId = req.params.campaign_id
         const noteId = req.params.note_id
+        const userId = req.user.id
 
         NotesService.deleteNote(knexInstance, campId, noteId)
             .then(() => {
@@ -150,6 +155,7 @@ notesRouter
         const knexInstance = req.app.get('db')
         const campId = req.params.campaign_id
         const noteId = req.params.note_id
+        const userId = req.user.id
 
         const {
             note_title,
@@ -213,5 +219,65 @@ notesRouter
                 })
 
     })
+notesRouter 
+    .route('/:campaign_id')
+    .all((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const campId = req.params.campaign_id
+        CampaignsService.getCampaignById(knexInstance, campId)
+            .then(campaign => {
+                if(!campaign){
+                    return res
+                        .status(404)
+                        .json({error: {message: `Campaign Not Found`}})
+                }
+                
+                NotesService.getAllNotesByCampaign(knexInstance, campId)
+                .then(notes => {
+                    res.notes = notes
+                    next()
+                })
+                .catch(next)
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        res.json(res.notes)
+    })
 
-module.exports = notesRouter
+notesRouter
+    .route('/:campaign_id/:note_id')
+    .all((req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const campId = req.params.campaign_id
+        const noteId = req.params.note_id
+        CampaignsService.getCampaignById(knexInstance, campId)
+            .then(campaign => {
+                if(!campaign){
+                    return res
+                        .status(404)
+                        .json({error: {message: `Campaign Not Found`}})
+                }
+
+                NotesService.getNoteById(knexInstance, campId, noteId)
+                    .then(note => {
+                        if(!note){
+                            return res
+                                .status(404)
+                                .json({error: {message: `Note Not Found`}})
+                        }
+                        res.note = note
+                        next()
+                    })
+                    .catch(next)
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        res.json(res.note)
+    })
+
+module.exports = {
+    userNotesRouter,
+    notesRouter
+}
