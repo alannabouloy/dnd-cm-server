@@ -7,7 +7,6 @@ const jsonBodyParser = express.json()
 authRouter
     .post('/login', jsonBodyParser, (req, res, next) => {
         const { username, user_password } = req.body
-        console.log('received credentials:', username, user_password)
         const loginUser = {username, user_password}
 
         for(const [key, value] of Object.entries(loginUser)){
@@ -43,7 +42,6 @@ authRouter
                     const sub = dbUser.username
                     const payload = {user_id: dbUser.id}
                     const token = AuthService.createJwt(sub, payload)
-                    console.log('token sent: ', token)
                     res.json({
                         authToken: token,
                     })
