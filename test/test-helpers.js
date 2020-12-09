@@ -40,30 +40,30 @@ function makeCampaignsArray(){
             campaign_name: 'testcampaign1',
             players: 3,
             admin: 1,
-            desc: 'this is a test',
+            camp_desc: 'this is a test',
             active: true,
             private_campaign: false,
-            playing_since: new Date('2029-01-22T16:28:32.615Z')
+            active_since: '2029-01-22T16:28:32.615Z'
         },
         {
             id: 2, 
             campaign_name: 'testcampaign2',
             players: 5,
             admin: 2,
-            desc: 'this is a test',
+            camp_desc: 'this is a test',
             active: true,
             private_campaign: false,
-            playing_since: new Date('2029-01-22T16:28:32.615Z')
+            active_since: '2029-01-22T16:28:32.615Z'
         },
         {
             id: 3,
             campaign_name: 'testcampaign3',
             players: 4,
-            admin: 3,
-            desc: 'this is a test',
+            admin: 1,
+            camp_desc: 'this is a test',
             active: true,
             private_campaign: true,
-            playing_since: new Date('2029-01-22T16:28:32.615Z')
+            active_since: '2029-01-22T16:28:32.615Z'
         }
     ]
 }
@@ -74,7 +74,7 @@ function makeNotesArray(){
             id: 1,
             note_title: 'testnote1',
             note_content: 'this is a  test',
-            modified: new Date('2029-01-22T16:28:32.615Z'),
+            modified: '2029-01-22T16:28:32.615Z',
             private_note: false,
             admin: 1,
             campaign: 2
@@ -83,7 +83,7 @@ function makeNotesArray(){
             id: 2,
             note_title: 'testnote2',
             note_content: 'this is a test',
-            modified: new Date('2029-01-22T16:28:32.615Z'),
+            modified: '2029-01-22T16:28:32.615Z',
             private_note: true,
             admin: 2,
             campaign: 2
@@ -92,7 +92,7 @@ function makeNotesArray(){
             id: 3, 
             note_title: 'testnote3',
             note_content: 'this is a test',
-            modified: new Date('2029-01-22T16:28:32.615Z'),
+            modified: '2029-01-22T16:28:32.615Z',
             private_note: false,
             admin: 1,
             campaign: 1

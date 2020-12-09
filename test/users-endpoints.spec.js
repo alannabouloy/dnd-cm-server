@@ -6,7 +6,7 @@ const helpers = require('./test-helpers')
 
 
 
-describe.only('Users Endpoints', function() {
+describe('Users Endpoints', function() {
     let db
 
     before('make knex instance', () => {
