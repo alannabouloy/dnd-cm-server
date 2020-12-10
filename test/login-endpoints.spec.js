@@ -4,7 +4,7 @@ const app = require('../src/app')
 const helpers = require('./test-helpers')
 const jwt = require('jsonwebtoken')
 
-describe.only('Login Endpoint', function() {
+describe('Login Endpoint', function() {
     let db
     
     const testUsers = helpers.makeUsersArray()
