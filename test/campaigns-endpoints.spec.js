@@ -4,7 +4,7 @@ const app = require('../src/app')
 const helpers = require('./test-helpers')
 
 
-describe.only('Campaign Endpoints', () => {
+describe('Campaign Endpoints', () => {
     let db
 
     before('make knex instance', () => {

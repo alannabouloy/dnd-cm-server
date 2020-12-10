@@ -27,7 +27,7 @@ authRouter
                 return res
                     .status(400)
                     .json({
-                        error: 'Incorrect username or password',
+                        error: 'Incorrect username or user_password',
                     })
             }
             return AuthService.comparePasswords(loginUser.user_password, dbUser.user_password)
@@ -36,7 +36,7 @@ authRouter
                         return res
                             .status(400)
                             .json({
-                                error: 'Incorrect username or password',
+                                error: 'Incorrect username or user_password',
                             })
                     }
                     const sub = dbUser.username

@@ -115,6 +115,16 @@ function seedUsers(db, users){
         )
 }
 
+function seedCampaigns(db, campaigns){
+    return db.into('campaigns').insert(campaigns)
+        .then(() => 
+            db.raw(
+                `SELECT setval('campaigns_id_seq', ?)`,
+                [campaigns[campaigns.length -1].id],
+            )
+        )
+}
+
 function makeAuthHeader(user, secret = process.env.JWT_SECRET){
     const token = jwt.sign({ user_id: user.id }, secret, {
         subject: user.username,
@@ -129,5 +139,6 @@ module.exports = {
      makeCampaignsArray, 
      makeNotesArray,
      seedUsers,
-     makeAuthHeader
+     makeAuthHeader, 
+     seedCampaigns
 }
