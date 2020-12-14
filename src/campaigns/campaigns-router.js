@@ -46,7 +46,7 @@ userCampaignsRouter
         const {campaign_name, players = 1, active = true, private_campaign = false, camp_desc = '' } = req.body
         const newCampaign = {
             campaign_name,
-            players,
+            players: parseInt(players),
             active,
             private_campaign,
             camp_desc,
@@ -58,7 +58,7 @@ userCampaignsRouter
                 .json({error: {message: `Request body must include a 'campaign_name' value`}})
         }
         errorMessage = ''
-        errorMessage = helpers.validateStringLength(campaign_name, 4, "campaign_name")
+        errorMessage = helpers.validateMinStringLength(campaign_name, 4, "campaign_name")
         if(errorMessage){
             return res
                 .status(400)
@@ -72,7 +72,7 @@ userCampaignsRouter
         }
 
         if(players){
-            errorMessage = helpers.validateType(players, 'number', 'players')
+            errorMessage = helpers.validateType(parseInt(players), 'number', 'players')
             if(errorMessage){
                 return res
                     .status(400)
@@ -185,7 +185,7 @@ userCampaignsRouter
                     .status(400)
                     .json(error)
             }
-            error = helpers.validateStringLength(campaign_name, 4, 'campaign_name')
+            error = helpers.validateMinStringLength(campaign_name, 4, 'campaign_name')
             if(error){
                 return res
                     .status(400)

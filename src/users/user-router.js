@@ -27,41 +27,33 @@ usersRouter
             email
         } = req.body
 
-        const newUser = {
-            username,
-            user_password,
-            first_name,
-            last_name,
-            email
-        }
+        const keys = ["username", "user_password", "first_name", "last_name", "email"]
 
-        const keys = Object.keys(newUser)
-
-        let error = helpers.validateKeys(newUser, keys)
+        let error = helpers.validateKeys({username, user_password, first_name, last_name, email}, keys)
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = helpers.validateStringLength(username, 6, "username")
+        error = helpers.validateMinStringLength(username, 6, "username")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = helpers.validateStringLength(user_password, 8, "user_password")
+        error = UsersService.validatePassword(user_password)
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = helpers.validateStringLength(first_name, 2, "first_name")
+        error = helpers.validateMinStringLength(first_name, 2, "first_name")
         if(error){
             return res
                 .status(400)
                 .json(error)
         }
-        error = helpers.validateStringLength(last_name, 2, "last_name")
+        error = helpers.validateMinStringLength(last_name, 2, "last_name")
         if(error){
             return res
                 .status(400)
@@ -73,14 +65,42 @@ usersRouter
                 .status(400)
                 .json(error)
         }
+        UsersService.hasUserWithUsername(knexInstance, username)
+            .then(hasUser => {
+                if(hasUser){
+                    return res
+                        .status(400)
+                        .json({ error: { message: `Username already taken` } })
+                }
 
-        UsersService.addUser(knexInstance, newUser)
-            .then(user => {
-                res
-                    .status(201)
-                    .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                    .json(user)
-            })
+                return UsersService.hasUserWithEmail(knexInstance, email)
+                    .then(hasUser => {
+                        if(hasUser){
+                            return res
+                                .status(400)
+                                .json({ error: { message: `A user account with this email already exists`}})
+                        }
+
+                        return UsersService.hashPassword(user_password)
+                            .then(hashedPassword => {
+                                const newUser = {
+                                    username, 
+                                    user_password: hashedPassword,
+                                    first_name,
+                                    last_name,
+                                    email
+                                }
+
+                                return UsersService.addUser(knexInstance, newUser)
+                                    .then(user => {
+                                        res
+                                            .status(201)
+                                            .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                                            .json(user)
+                                    })
+                            })
+                    })
+            })    
     })
 
 usersRouter

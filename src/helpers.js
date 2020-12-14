@@ -10,9 +10,14 @@ const helpers = {
         return error
     },
 
-    validateStringLength(string, length, key){
+    validateMinStringLength(string, length, key){
         if(string.length < length){
             return {error: {message: `'${key}' must be at least ${length} characters in length`}}
+        }
+    },
+    validateMaxStringLength(string, length, key){
+        if(string.length > length){
+            return {error: {message: `'${key}' cannot be more than ${length} chararacters in length`}}
         }
     },
     validateEmail(email){

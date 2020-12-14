@@ -74,7 +74,7 @@ userNotesRouter
                 .status(400)
                 .json(error)
         }
-        error = helpers.validateStringLength(note_title, 4, 'note_title')
+        error = helpers.validateMinStringLength(note_title, 4, 'note_title')
         if(error){
             return res
                 .status(400)
@@ -185,7 +185,7 @@ userNotesRouter
                     .status(400)
                     .json(error)
             }
-            error = helpers.validateStringLength(note_title, 3, 'note_title')
+            error = helpers.validateMinStringLength(note_title, 3, 'note_title')
             if(error){
                 return res
                     .status(400)
