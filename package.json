@@ -13,6 +13,9 @@
     "deploy": "git push heroku master"
   },
   "keywords": [],
+  "engines": {
+    "node": "12.18.4"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -24,13 +27,13 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.12",
     "morgan": "^1.10.0",
-    "pg": "^8.4.2"
+    "pg": "^8.4.2",
+    "postgrator-cli": "^3.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^8.2.0",
     "nodemon": "^2.0.6",
-    "postgrator-cli": "^3.2.0",
     "supertest": "^5.0.0"
   }
 }
