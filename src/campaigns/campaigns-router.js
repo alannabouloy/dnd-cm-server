@@ -15,8 +15,8 @@ const campaignsRouter = express.Router()
 function serializeCampaign(campaign) {
     campaign = {
         ...campaign,
-        campaign_name: xss(campaign_name),
-        camp_desc: xss(camp_desc)
+        campaign_name: xss(campaign.campaign_name),
+        camp_desc: xss(campaign.camp_desc)
     }
 
     return campaign
@@ -53,7 +53,7 @@ userCampaignsRouter
         
         try{
             //get campaigns from database
-            const campaigns = CampaignsService.getAllCampaignsByAdmin(db, id)
+            const campaigns = await CampaignsService.getAllCampaignsByAdmin(db, id)
             res
                 .json(campaigns)
 
@@ -165,7 +165,7 @@ userCampaignsRouter
                     .json({error: `User Not Found`})
             }
 
-            const campaign = CampaignsService.getUserCampaignById(db, userId, campId)
+            const campaign = await CampaignsService.getUserCampaignById(db, userId, campId)
 
             if(!campaign){
                 return res 
@@ -310,22 +310,28 @@ campaignsRouter
         const campId = req.params.campaign_id
 
         try {
-            const campaign = CampaignsService.getCampaignById(db, campId)
+            const campaign = await CampaignsService.getCampaignById(db, campId)
             
             if(!campaign){
                 return res
                     .status(404)
                     .json({error: `Campaign Not Found`})
             }
-            res.campaign = campaign
+            req.campaign = campaign
             next()
         } catch(error){
             next(error)
         }
     })
     .get((req, res, next) => {
-        res
-            .json(serializeCampaign(res.campaign))
+        try{
+            res
+                .json(serializeCampaign(req.campaign))
+            next()
+        } catch(error){
+            next(error)
+        }
+       
     })
 
 
