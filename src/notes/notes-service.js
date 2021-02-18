@@ -14,11 +14,10 @@ const NotesService = {
             .where('campaign', campId)
     },
 
-    getNoteById(knex, campId, noteId){
+    getNoteById(knex, noteId){
         return knex
             .select('*')
             .from('notes')
-            .where('campaign', campId)
             .where('id', noteId)
             .first()
     },

@@ -141,7 +141,7 @@ userNotesRouter
         });
       }
 
-      const note = await NotesService.getNoteById(db, campId, noteId);
+      const note = await NotesService.getNoteById(db, noteId);
 
       if (!note) {
         return res.status(404).json({
