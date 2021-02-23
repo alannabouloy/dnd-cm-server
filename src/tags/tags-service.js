@@ -32,8 +32,21 @@ const TagsService = {
         return notes
     },
 
-    
+    async addNewTag(knex, userId, tag){
+        const newTag = await knex
+            .into('tags')
+            .insert(tag)
+            .returning('*')
+            .then(rows => { return rows[0]})
 
+        return newTag
+    },
+
+    deleteUserCampaign(knex, tagId){
+        return knex('tags')
+            .where({id: tagId})
+            .delete()
+    }
 
 }
 
