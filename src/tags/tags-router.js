@@ -96,3 +96,41 @@ tagsRouter
             next(error)
         }
     })
+
+    tagsRouter
+        .route('/:tagId')
+        .all(async (req, res, next) => {
+           const db = req.app.get('db')
+           const tagId = req.params.tagId
+           try{
+               const tag = await TagsService.getTagById(db, tagId)
+               if(!tag){
+                   return res
+                    .status(404)
+                    .json({error: 'Tag Not Found'})
+               }
+
+               req.tag = tag
+               next()
+           } catch(error){
+               next(error)
+           } 
+        })
+        .get(async(req, res, next) => {
+            const db = req.app.get('db')
+            const userId = req.tag.admin
+            const tag = req.tag
+            try {
+                const notes = await TagsService.getAllNotesWithTag(db, userId, tag.tag_name)
+                const result = {
+                    tag,
+                    notes: notes
+                }
+
+                res
+                    .json(result)
+            }catch(error){
+                next(error)
+            }
+        })
+        .delete()

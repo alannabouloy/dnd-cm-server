@@ -23,6 +23,16 @@ const TagsService = {
         return uniqueTags
     },
 
+    async getTagById(knex, tagId){
+        const tag = await knex
+            .select('*')
+            .from('tags')
+            .where({id: tagId})
+            .first()
+        
+        return tag
+    },
+
     async getAllNotesWithTag(knex, userId, tagName){
         const tags = await this.getAllTags(knex, userId)
 
@@ -42,7 +52,7 @@ const TagsService = {
         return newTag
     },
 
-    deleteUserCampaign(knex, tagId){
+    deleteTag(knex, tagId){
         return knex('tags')
             .where({id: tagId})
             .delete()
